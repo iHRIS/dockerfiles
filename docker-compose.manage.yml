@@ -2,10 +2,10 @@ version: '3'
 
 services:
 
-  ihris-manage-demo:
+  ihris-manage:
     build:
       context: .
-      dockerfile: ./Dockerfile-manage-demo
+      dockerfile: ./Dockerfile-manage
     ports:
       - "80:80"
     links:
