@@ -73,7 +73,8 @@ RUN sed -i 's|"../../../../I2CE"|"/var/lib/iHRIS/lib/4.3-dev/I2CE"|' local/confi
 # have to uncomment first for some reason
 RUN sed -i 's|//$i2ce_site_dsn|$i2ce_site_dsn|' local/config.values.php &&\
     cat local/config.values.php | grep site_dsn
-RUN sed -i "s|'mysql:user=john;pass=pass;host=localhost;dbname=database'|'mysql:user=manage;pass=manage;host=mysql;dbname=manage'|" local/config.values.php&&\
+# different than manage-demo
+RUN sed -i "s|'mysql://john:pass@localhost/database'|'mysql:user=manage;pass=manage;host=mysql;dbname=manage'|" local/config.values.php&&\
     cat local/config.values.php | grep mysql
 RUN sed -i 's|//$i2ce_site_module_config = "MY_SITE_MODULE.xml"|$i2ce_site_module_config = "/var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/iHRIS-Manage-BLANK.xml"|' local/config.values.php&&\
     cat local/config.values.php | grep xml
@@ -82,4 +83,4 @@ RUN sed -i 's|RewriteBase  /iHRIS/manage|RewriteBase /manage|' .htaccess &&\
     cat .htaccess
 
 WORKDIR /var/www/html
-RUN ln -s /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/pages manage-demo
+RUN ln -s /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/pages manage
