@@ -1,17 +1,10 @@
 FROM php:7-apache
-# to troubleshoot, build then: docker run -it <image hash> bash
-
 # postfix should run in a different container. not installed here.
-# also not configuring mysql here
-
-# installed in image but done anyway: mbstring, pdo
-RUN php -i
+# not configuring mysql here
 
 RUN apt-get update &&\
-    apt-get install -y libpng-dev libtidy-dev libicu-dev &&\
-    docker-php-ext-install -j$(nproc) gd tidy intl bcmath pdo pdo_mysql opcache mbstring
-
-RUN apt-get install -y php-pear && pear install text_password
+    apt-get install -y libpng-dev libtidy-dev libicu-dev php-text-password bzr bzrtools &&\
+    docker-php-ext-install -j$(nproc) gd tidy intl bcmath pdo_mysql opcache
 
 RUN apt-get install -y uuid-dev &&\
     pecl install uuid apcu &&\
@@ -19,11 +12,6 @@ RUN apt-get install -y uuid-dev &&\
 
 WORKDIR /usr/local/etc/php/conf.d/
 
-# confirm apcu/uuid ini files in /usr/local/etc/php/conf.d/
-RUN ls -l &&\
-    cat docker-php-ext-uuid.ini
-
-# configure apcu
 RUN echo 'apc.enabled=1\n\
 apc.write_lock=1\n\
 apc.shm_size=100M\n\
@@ -31,6 +19,7 @@ apc.slam_defense=0\n\
 apc.enable_cli=1\n'\
 >> docker-php-ext-apcu.ini && cat docker-php-ext-apcu.ini
 
+# php-memcached will not install, do this instead
 RUN apt-get install -y libmemcached-dev zlib1g-dev \
     && pecl install memcached \
     && docker-php-ext-enable memcached
@@ -47,40 +36,32 @@ RUN a2enmod rewrite
 
 WORKDIR /etc/apache2
 
-RUN sed -i "s|Options Indexes FollowSymLinks|Options Indexes FollowSymLinks MultiViews|" apache2.conf && cat apache2.conf
-
-RUN apt-get install -y bzr bzrtools
+RUN sed -i "s|Options Indexes FollowSymLinks|Options Indexes FollowSymLinks MultiViews|" apache2.conf && cat apache2.conf | grep Options
 
 RUN mkdir -p /var/lib/iHRIS/lib/4.3-dev
 
 WORKDIR /var/lib/iHRIS/lib/4.3-dev
 
-RUN bzr branch lp:i2ce/4.3 I2CE &&\
-    bzr branch lp:textlayout/4.3 textlayout &&\
-    bzr branch lp:ihris-common/4.3 ihris-common
-
-RUN bzr branch lp:ihris-manage/4.3 ihris-manage
+RUN bzr co --lightweight lp:i2ce/4.3 I2CE &&\
+    bzr co --lightweight lp:textlayout/4.3 textlayout &&\
+    bzr co --lightweight lp:ihris-common/4.3 ihris-common &&\
+    bzr co --lightweight lp:ihris-manage/4.3 ihris-manage
 
 WORKDIR /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/pages
 
-# difference with manage-demo, there's no local dir
-RUN mkdir local &&\
-    cp config.values.php local/ &&\
-    cp htaccess.TEMPLATE .htaccess
+RUN cp htaccess.TEMPLATE .htaccess &&\
+    sed -i 's|RewriteBase  /iHRIS/manage|RewriteBase /manage|' .htaccess &&\
+    cat .htaccess | grep manage &&\
+    [ -d local ] || mkdir local
 
-RUN sed -i 's|"../../../../I2CE"|"/var/lib/iHRIS/lib/4.3-dev/I2CE"|' local/config.values.php &&\
-    cat local/config.values.php | grep I2CE
-# have to uncomment first for some reason
-RUN sed -i 's|//$i2ce_site_dsn|$i2ce_site_dsn|' local/config.values.php &&\
-    cat local/config.values.php | grep site_dsn
-# different than manage-demo
-RUN sed -i "s|'mysql://john:pass@localhost/database'|'mysql:user=manage;pass=manage;host=mysql;dbname=manage'|" local/config.values.php&&\
-    cat local/config.values.php | grep mysql
-RUN sed -i 's|//$i2ce_site_module_config = "MY_SITE_MODULE.xml"|$i2ce_site_module_config = "/var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/iHRIS-Manage-BLANK.xml"|' local/config.values.php&&\
-    cat local/config.values.php | grep xml
-
-RUN sed -i 's|RewriteBase  /iHRIS/manage|RewriteBase /manage|' .htaccess &&\
-    cat .htaccess
+# need to put stuff in environment variables
+RUN echo '<?php \n\
+$i2ce_site_i2ce_path = "/var/lib/iHRIS/lib/4.3-dev/I2CE" ;\n\
+$i2ce_site_dsn = "mysql:user=manage;pass=manage;host=mysql;dbname=manage" ;\n\
+$i2ce_site_module_config = "/var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/iHRIS-Manage-BLANK.xml" ;\n\
+$i2ce_site_user_access_init = null ;\n'\
+>> local/config.values.php && cat local/config.values.php
 
 WORKDIR /var/www/html
+
 RUN ln -s /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/pages manage
