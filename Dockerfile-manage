@@ -62,6 +62,21 @@ $i2ce_site_module_config = "/var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/
 $i2ce_site_user_access_init = null ;\n'\
 >> local/config.values.php && cat local/config.values.php
 
+WORKDIR /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank
+
+RUN printf '    <enable name="csd-data-address-type" />\n\
+    <enable name="csd-data-dow" />\n\
+    <enable name="csd-data-gender" />\n\
+    <enable name="csd-data-provider-status" />\n\
+    <enable name="csd-data-provider-data-model" />\n\
+    <enable name="IL-HWR" />\n\
+    <enable name="mHero" />\n\
+    <enable name="csd-search" />\n\
+    <enable name="CSD-data" />\n\
+    ' >> enable.txt
+
+RUN sed -i.bak '/<metadata>/r enable.txt' iHRIS-Manage-BLANK.xml
+
 WORKDIR /var/www/html
 
 RUN ln -s /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/pages manage
