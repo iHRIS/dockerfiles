@@ -21,3 +21,4 @@ services:
       MYSQL_DATABASE: "manage"
       MYSQL_USER: "manage"
       MYSQL_PASSWORD: "manage"
+    command: mysqld --log-bin-trust-function-creators=TRUE --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
