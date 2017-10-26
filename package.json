@@ -1,0 +1,25 @@
+{
+  "name": "dockerfiles",
+  "version": "1.0.0",
+  "description": "```sh git clone https://github.com/citizenrich/ihris-docker ```",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iHRIS/dockerfiles.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iHRIS/dockerfiles/issues"
+  },
+  "homepage": "https://github.com/iHRIS/dockerfiles#readme",
+  "dependencies": {
+    "puppeteer": "^0.12.0"
+  }
+}
