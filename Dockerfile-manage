@@ -54,13 +54,13 @@ RUN cp htaccess.TEMPLATE .htaccess &&\
     cat .htaccess | grep manage &&\
     [ -d local ] || mkdir local
 
-# need to put stuff in environment variables
-RUN echo '<?php \n\
-$i2ce_site_i2ce_path = "/var/lib/iHRIS/lib/4.3-dev/I2CE" ;\n\
-$i2ce_site_dsn = "mysql:user=manage;pass=manage;host=mysql;dbname=manage" ;\n\
-$i2ce_site_module_config = "/var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/iHRIS-Manage-BLANK.xml" ;\n\
-$i2ce_site_user_access_init = null ;\n'\
->> local/config.values.php && cat local/config.values.php
+ARG DSN='mysql:user=ihris;pass=ihris;host=localhost;dbname=ihris'
+
+RUN echo "<?php \n\
+\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/4.3-dev/I2CE' ;\n\
+\$i2ce_site_dsn = $DSN ;\n\
+\$i2ce_site_module_config = '/var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites//blank/iHRIS-Manage-BLANK.xml' ;\n\
+\$i2ce_site_user_access_init = null ;" >> local/config.values.php && cat local/config.values.php
 
 WORKDIR /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank
 

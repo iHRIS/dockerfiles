@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile-manage
+      args:
+        - DSN="mysql:user=ihris;pass=ihris;host=mysql;dbname=ihris"
     ports:
       - "80:80"
     links:
@@ -17,8 +19,8 @@ services:
     ports:
       - 3306:3306
     environment:
-      MYSQL_ROOT_PASSWORD: "manage"
-      MYSQL_DATABASE: "manage"
-      MYSQL_USER: "manage"
-      MYSQL_PASSWORD: "manage"
+      MYSQL_ROOT_PASSWORD: "ihris"
+      MYSQL_DATABASE: "ihris"
+      MYSQL_USER: "ihris"
+      MYSQL_PASSWORD: "ihris"
     command: mysqld --log-bin-trust-function-creators=TRUE --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
