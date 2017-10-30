@@ -85,4 +85,5 @@ Todo
 - [X] Build env/arg for DSN
 - [x] Fix errors in manage-demo
 - [x] Single Dockerfile
+- [x] Tags builds for Docker hub
 - [ ] Update when object storage is added to iHRIS
