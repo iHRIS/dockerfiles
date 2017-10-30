@@ -5,13 +5,20 @@ services:
   ihris-manage-demo:
     build:
       context: .
-      dockerfile: ./Dockerfile-manage-demo
+      dockerfile: ./Dockerfile
       args:
-        - DSN="mysql:user=ihris;pass=ihris;host=mysql;dbname=ihris"
+        - VER=4.3-dev
+        - MVER=4.3
+        - SOFT=ihris-manage
+        - TYPE=Demo
+        - SITE=manage-demo
+        - MCONFIG=iHRIS-Manage-Demo.xml
     ports:
       - "80:80"
     links:
       - mysql:mysql
+    environment:
+      DSN: "mysql:user=ihris;pass=ihris;host=mysql;dbname=ihris"
 
   mysql:
     image: mysql

@@ -1,6 +1,5 @@
 FROM php:7-apache
 # postfix should run in a different container. not installed here.
-# not configuring mysql here
 
 RUN apt-get update &&\
     apt-get install -y libpng-dev libtidy-dev libicu-dev php-text-password bzr bzrtools &&\
@@ -38,31 +37,35 @@ WORKDIR /etc/apache2
 
 RUN sed -i "s|Options Indexes FollowSymLinks|Options Indexes FollowSymLinks MultiViews|" apache2.conf && cat apache2.conf | grep Options
 
-RUN mkdir -p /var/lib/iHRIS/lib/4.3-dev
+ARG VER
+ARG MVER
+ARG SOFT
+ARG TYPE
+ARG SITE
+ARG MCONFIG
 
-WORKDIR /var/lib/iHRIS/lib/4.3-dev
+RUN mkdir -p /var/lib/iHRIS/lib/$VER
 
-RUN bzr co --lightweight lp:i2ce/4.3 I2CE &&\
-    bzr co --lightweight lp:textlayout/4.3 textlayout &&\
-    bzr co --lightweight lp:ihris-common/4.3 ihris-common &&\
-    bzr co --lightweight lp:ihris-manage/4.3 ihris-manage
+WORKDIR /var/lib/iHRIS/lib/$VER
 
-WORKDIR /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/Demo/pages
+RUN bzr co --lightweight lp:i2ce/$MVER I2CE &&\
+    bzr co --lightweight lp:textlayout/$MVER textlayout &&\
+    bzr co --lightweight lp:ihris-common/$MVER ihris-common &&\
+    bzr co --lightweight lp:$SOFT/$MVER $SOFT
+
+WORKDIR /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/pages
 
 RUN cp htaccess.TEMPLATE .htaccess &&\
-    sed -i 's|RewriteBase  /iHRIS/manage-demo|RewriteBase /manage-demo|' .htaccess &&\
-    cat .htaccess | grep manage &&\
-    [ -d local ] || mkdir local
-
-ARG DSN='mysql:user=ihris;pass=ihris;host=localhost;dbname=ihris'
+    sed -i 's|RewriteBase  /iHRIS|RewriteBase |' .htaccess &&\
+    cat .htaccess && [ -d local ] || mkdir local
 
 RUN echo "<?php \n\
-\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/4.3-dev/I2CE' ;\n\
-\$i2ce_site_dsn = '$DSN' ;\n\
-\$i2ce_site_module_config = '/var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/Demo/iHRIS-Manage-Demo.xml' ;\n\
+\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/$VER/I2CE' ;\n\
+\$i2ce_site_dsn = getenv('DSN') ;\n\
+\$i2ce_site_module_config = '/var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/$MCONFIG' ;\n\
 \$i2ce_site_user_access_init = null ;" >> local/config.values.php && cat local/config.values.php
 
-WORKDIR /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/Demo
+WORKDIR /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE
 
 RUN printf '    <enable name="csd-data-address-type" />\n\
     <enable name="csd-data-dow" />\n\
@@ -75,8 +78,8 @@ RUN printf '    <enable name="csd-data-address-type" />\n\
     <enable name="CSD-data" />\n\
     ' >> enable.txt
 
-RUN sed -i.bak '/<metadata>/r enable.txt' iHRIS-Manage-Demo.xml
+RUN sed -i.bak '/<metadata>/r enable.txt' $MCONFIG
 
 WORKDIR /var/www/html
 
-RUN ln -s /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/Demo/pages manage-demo
+RUN ln -s /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/pages $SITE
