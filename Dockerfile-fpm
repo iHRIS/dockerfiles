@@ -1,5 +1,4 @@
-FROM php:7-apache
-# memcache, postfix and eventually apache should run in different containers.
+FROM php:7-fpm
 
 RUN apt-get update &&\
     apt-get install -y libpng-dev libtidy-dev libicu-dev bzr &&\
@@ -9,37 +8,30 @@ RUN apt-get install -y uuid-dev &&\
     pecl install uuid apcu &&\
     docker-php-ext-enable uuid apcu
 
-RUN pear install Text_Password
-
 WORKDIR /usr/local/etc/php/conf.d/
 
 RUN echo 'apc.enabled=1\n\
-apc.write_lock=1\n\
-apc.shm_size=100M\n\
-apc.slam_defense=0\n\
-apc.enable_cli=1\n'\
->> docker-php-ext-apcu.ini && cat docker-php-ext-apcu.ini
+    apc.write_lock=1\n\
+    apc.shm_size=100M\n\
+    apc.slam_defense=0\n\
+    apc.enable_cli=1\n'\
+    >> docker-php-ext-apcu.ini && cat docker-php-ext-apcu.ini
 
 # php-memcached will not install, do this instead
 RUN apt-get install -y libmemcached-dev zlib1g-dev \
     && pecl install memcached \
     && docker-php-ext-enable memcached
 
+RUN pear install Text_Password
+
 RUN echo 'opcache.memory_consumption=128M\n\
-opcache.interned_strings_buffer=8\n\
-opcache.max_accelerated_files=4000\n\
-opcache.revalidate_freq=60\n\
-opcache.fast_shutdown=1\n\
-opcache.enable_cli=1\n'\
->> docker-php-ext-opcache.ini && cat docker-php-ext-opcache.ini
+    opcache.interned_strings_buffer=8\n\
+    opcache.max_accelerated_files=4000\n\
+    opcache.revalidate_freq=60\n\
+    opcache.fast_shutdown=1\n\
+    opcache.enable_cli=1\n'\
+    >> docker-php-ext-opcache.ini && cat docker-php-ext-opcache.ini
 
-RUN a2enmod rewrite
-
-WORKDIR /etc/apache2
-
-RUN sed -i "s|Options Indexes FollowSymLinks|Options Indexes FollowSymLinks MultiViews|" apache2.conf && cat apache2.conf | grep Options
-
-# defaults to 4.3-dev with blank site, but can be overridden in build step
 ARG VER=4.3-dev
 ARG MVER=4.3
 ARG SOFT=ihris-manage
@@ -58,16 +50,13 @@ RUN bzr co --lightweight lp:i2ce/$MVER I2CE &&\
 
 WORKDIR /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/pages
 
-RUN cp htaccess.TEMPLATE .htaccess &&\
-    # rewrites the base to /manage
-    sed -i 's|RewriteBase  /iHRIS|RewriteBase |' .htaccess &&\
-    cat .htaccess && [ -d local ] || mkdir local
+RUN mkdir local
 
 RUN echo "<?php \n\
-\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/$VER/I2CE' ;\n\
-\$i2ce_site_dsn = getenv('DSN') ;\n\
-\$i2ce_site_module_config = '/var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/$MCONFIG' ;\n\
-\$i2ce_site_user_access_init = null ;" >> local/config.values.php && cat local/config.values.php
+    \$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/$VER/I2CE' ;\n\
+    \$i2ce_site_dsn = getenv('DSN') ;\n\
+    \$i2ce_site_module_config = '/var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/$MCONFIG' ;\n\
+    \$i2ce_site_user_access_init = null ;" >> local/config.values.php && cat local/config.values.php
 
 WORKDIR /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE
 

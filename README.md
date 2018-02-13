@@ -85,5 +85,7 @@ Todo
 - [X] Build env/arg for DSN
 - [x] Fix errors in manage-demo
 - [x] Single Dockerfile
-- [x] Tags builds for Docker hub
+- [ ] Tags builds for Docker hub -- `bzr log -r-1 -q | sed -n 2p | awk '{print ($2)}'`
 - [ ] Update when object storage is added to iHRIS
+- [ ] Rewrite paths to be simpler
+- [ ] Use php-fpm container, preferably alpine
