@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:7.0-apache
 # memcache, postfix and eventually apache should run in different containers.
 
 RUN apt-get update &&\
@@ -83,6 +83,11 @@ RUN printf '    <enable name="csd-data-address-type" />\n\
     ' >> enable.txt
 
 RUN sed -i.bak '/<metadata>/r enable.txt' $MCONFIG
+
+
+#debug only
+RUN apt-get install -y vim
+
 
 WORKDIR /var/www/html
 

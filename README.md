@@ -1,5 +1,8 @@
 # Docker builds for iHRIS
 
+> Note: iHRIS is pinned to PHP 7.0 and MySQL 5.5 for the 4.3 release. 4.3-dev includes a fix for it to populate the database with no errors on 5.7.
+
+
 ### Configuration
 
 The iHRIS apps require several configurations. Some are set using for build-time and some during runtime. The database connection string (DSN) is set using an environment variable and can change as needed at runtime.
