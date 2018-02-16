@@ -1,4 +1,4 @@
-FROM php:7-apache
+FROM php:7.1-apache
 # memcache, postfix and eventually apache should run in different containers.
 
 RUN apt-get update &&\
@@ -39,24 +39,23 @@ WORKDIR /etc/apache2
 
 RUN sed -i "s|Options Indexes FollowSymLinks|Options Indexes FollowSymLinks MultiViews|" apache2.conf && cat apache2.conf | grep Options
 
-# defaults to 4.3-dev with blank site, but can be overridden in build step
-ARG VER=4.3-dev
+# defaults to 4.3 with blank site, but can be overridden in build step
 ARG MVER=4.3
 ARG SOFT=ihris-manage
 ARG TYPE=blank
 ARG SITE=manage
 ARG MCONFIG=iHRIS-Manage-BLANK.xml
 
-RUN mkdir -p /var/lib/iHRIS/lib/$VER
+RUN mkdir -p /var/lib/iHRIS/lib/$MVER
 
-WORKDIR /var/lib/iHRIS/lib/$VER
+WORKDIR /var/lib/iHRIS/lib/$MVER
 
 RUN bzr co --lightweight lp:i2ce/$MVER I2CE &&\
     bzr co --lightweight lp:textlayout/$MVER textlayout &&\
     bzr co --lightweight lp:ihris-common/$MVER ihris-common &&\
     bzr co --lightweight lp:$SOFT/$MVER $SOFT
 
-WORKDIR /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/pages
+WORKDIR /var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE/pages
 
 RUN cp htaccess.TEMPLATE .htaccess &&\
     # rewrites the base to /manage
@@ -64,12 +63,12 @@ RUN cp htaccess.TEMPLATE .htaccess &&\
     cat .htaccess && [ -d local ] || mkdir local
 
 RUN echo "<?php \n\
-\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/$VER/I2CE' ;\n\
+\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/$MVER/I2CE' ;\n\
 \$i2ce_site_dsn = getenv('DSN') ;\n\
-\$i2ce_site_module_config = '/var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/$MCONFIG' ;\n\
+\$i2ce_site_module_config = '/var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE/$MCONFIG' ;\n\
 \$i2ce_site_user_access_init = null ;" >> local/config.values.php && cat local/config.values.php
 
-WORKDIR /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE
+WORKDIR /var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE
 
 RUN printf '    <enable name="csd-data-address-type" />\n\
     <enable name="csd-data-dow" />\n\
@@ -87,4 +86,4 @@ RUN sed -i.bak '/<metadata>/r enable.txt' $MCONFIG
 
 WORKDIR /var/www/html
 
-RUN ln -s /var/lib/iHRIS/lib/$VER/$SOFT/sites/$TYPE/pages $SITE
+RUN ln -s /var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE/pages $SITE
