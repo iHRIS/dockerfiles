@@ -43,15 +43,13 @@ Clone the repo, build the image, and run a container.
 git clone https://github.com/ihris/dockerfiles
 cd dockerfiles
 docker build \
---env DSN="mysql:user=ihris;pass=ihris;host=docker.for.mac.localhost;dbname=ihris" \
---build-arg VER=4.3-dev \
 --build-arg MVER=4.3 \
 --build-arg SOFT=ihris-manage \
 --build-arg TYPE=Demo \
 --build-arg SITE=manage-demo \
 --build-arg MCONFIG=iHRIS-Manage-Demo.xml \
 -t ihris-manage-demo .
-docker run -d -p 80:80 ihris-manage-demo
+docker run -d -p 80:80 --env DSN="mysql:user=ihris;pass=ihris;host=docker.for.mac.localhost;dbname=ihris" ihris-manage-demo
 ```
 
 ### iHRIS Manage Blank Site
