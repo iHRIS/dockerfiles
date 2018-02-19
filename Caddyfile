@@ -1,5 +1,9 @@
-localhost {
-    fastcgi / 127.0.0.1:9000 php {
-        root /var/lib/iHRIS/lib/4.3-dev/ihris-manage/sites/blank/pages
-    }
+localhost
+
+tls off
+
+fastcgi / 127.0.0.1:9000 php {
+	root /var/www/html
 }
+
+# rewrite /iHRIS /
