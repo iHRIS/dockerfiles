@@ -80,14 +80,10 @@ RUN printf '    <enable name="csd-data-address-type" />\n\
     <enable name="csd-search" />\n\
     <enable name="CSD-data" />\n\
     <enable name="ihris-manange-mcsd-update-supplier" />\n\
+    <enable name="PersonAttendance" />\n\
     ' >> enable.txt
 
 RUN sed -i.bak '/<metadata>/r enable.txt' $MCONFIG
-
-
-#debug only
-RUN apt-get install -y vim
-
 
 WORKDIR /var/www/html
 
