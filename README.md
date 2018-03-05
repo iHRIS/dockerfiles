@@ -11,7 +11,36 @@ One Dockerfile can build both blank and demo sites. This is done using build-tim
 
 Both the ARGs and ENVs are set in the example docker-compose files. You can choose the default already in the Dockerfile or override them in docker-compose, other orchestration framework, or at build time on CLI.
 
-### Mac
+
+### iHRIS Manage Blank Site
+
+```
+git clone https://github.com/ihris/dockerfiles
+docker-compose -f docker-compose.manage.yml up -d
+```
+
+### iHRIS Manage Demo
+
+```
+git clone https://github.com/ihris/dockerfiles
+docker-compose -f docker-compose.manage.demo.yml up -d
+```
+
+Go to http://localhost/manage-demo or http://localhost/manage Accept the popup app that notes that an install will occur. Reload the page for the installation to start. It can take up to 10 minutes. There will be another popup to click to go to the new site. Login as i2ce_admin with pass 'ihris'
+
+This can be automated once the application and database are up:
+
+```sh
+docker ps
+docker exec -it <container hash> bash
+cd manage # or cd manage-demo
+php index.php --update=1 # run this twice
+```
+
+If there are any issues, to troubleshoot, build then: docker run -it <image hash> bash
+
+
+### Mac using MySQL on localhost
 
 > [Docker networking on Mac](https://docs.docker.com/docker-for-mac/networking/) and Windows uses a thin VM as Docker uses the Linux kernel. Localhost will be resolved as the VM not the host OS. Only on Linux as host OS will localhost  resolve as the host OS.
 
@@ -55,34 +84,8 @@ docker build \
 docker run -d -p 80:80 --env DSN="mysql:user=ihris;pass=ihris;host=docker.for.mac.localhost;dbname=ihris" ihris-manage-demo
 ```
 
-### iHRIS Manage Blank Site
 
-```
-git clone https://github.com/ihris/dockerfiles
-docker-compose -f docker-compose.manage.yml up -d
-```
-
-### iHRIS Manage Demo
-
-```
-git clone https://github.com/ihris/dockerfiles
-docker-compose -f docker-compose.manage.demo.yml up -d
-```
-
-Go to http://localhost/manage-demo or http://localhost/manage Accept the popup app that notes that an install will occur. Reload the page for the installation to start. It can take up to 10 minutes. There will be another popup to click to go to the new site. Login as i2ce_admin with pass 'ihris'
-
-This can be automated once the application and database are up:
-
-```sh
-docker ps
-docker exec -it <container hash> bash
-cd manage # or cd manage-demo
-php index.php --update=1 # run this twice
-```
-
-If there are any issues, to troubleshoot, build then: docker run -it <image hash> bash
-
-Todo
+### Todo
 - [X] Build env/arg for DSN
 - [x] Fix errors in manage-demo
 - [x] Single Dockerfile
@@ -90,3 +93,20 @@ Todo
 - [ ] Update when object storage is added to iHRIS
 - [ ] Rewrite paths to be simpler
 - [ ] Use php-fpm container, preferably alpine
+
+### PHP-FPM (in-progress)
+
+To build the php-fpm container:
+
+* make sure your mysql is running on your localhost
+* clone the repo, cd into cloned repo.
+then:
+```
+# build the image
+docker build -f Dockerfile-fpm -t ihris-fpm .
+# run an instance
+# change the DSN to match yours, localhost on linux or docker for mac/win using mac/win
+docker run -d -p 9000:9000 --env DSN="mysql:user=ihris;pass=ihris;host=docker.for.mac.host.internal;dbname=ihris" ihris-fpm
+# run update script if needed
+docker exec -it <image hash> bash
+```

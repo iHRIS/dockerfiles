@@ -3,16 +3,7 @@ version: '3'
 services:
 
   ihris-manage-demo:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        - VER=4.3-dev
-        - MVER=4.3
-        - SOFT=ihris-manage
-        - TYPE=Demo
-        - SITE=manage-demo
-        - MCONFIG=iHRIS-Manage-Demo.xml
+    image: ihris/manage:4.3-demo-0.2.0
     ports:
       - "80:80"
     links:
@@ -21,7 +12,7 @@ services:
       DSN: "mysql:user=ihris;pass=ihris;host=mysql;dbname=ihris"
 
   mysql:
-    image: mysql
+    image: mysql:5.5
     container_name: mysql
     ports:
       - 3306:3306

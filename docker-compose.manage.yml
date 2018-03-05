@@ -2,17 +2,8 @@ version: '3'
 
 services:
 
-  ihris-manage:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        - VER=4.3-dev
-        - MVER=4.3
-        - SOFT=ihris-manage
-        - TYPE=blank
-        - SITE=manage
-        - MCONFIG=iHRIS-Manage-BLANK.xml
+  ihris-manage-demo:
+    image: ihris/manage:4.3-0.2.0
     ports:
       - "80:80"
     links:
@@ -21,7 +12,7 @@ services:
       DSN: "mysql:user=ihris;pass=ihris;host=mysql;dbname=ihris"
 
   mysql:
-    image: mysql
+    image: mysql:5.5
     container_name: mysql
     ports:
       - 3306:3306
