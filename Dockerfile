@@ -2,7 +2,7 @@ FROM php:7.0-apache
 # memcache, postfix and eventually apache should run in different containers.
 
 RUN apt-get update &&\
-    apt-get install -y libpng-dev libtidy-dev libicu-dev bzr &&\
+    apt-get install -y wget libpng-dev libtidy-dev libicu-dev &&\
     docker-php-ext-install -j$(nproc) gd tidy intl bcmath pdo_mysql opcache
 
 RUN apt-get install -y uuid-dev &&\
@@ -40,7 +40,7 @@ WORKDIR /etc/apache2
 RUN sed -i "s|Options Indexes FollowSymLinks|Options Indexes FollowSymLinks MultiViews|" apache2.conf && cat apache2.conf | grep Options
 
 # defaults to 4.3 with blank site, but can be overridden in build step
-ARG MVER=4.3
+ARG MVER=4.3.0
 ARG SOFT=ihris-manage
 ARG TYPE=blank
 ARG SITE=manage
@@ -50,10 +50,9 @@ RUN mkdir -p /var/lib/iHRIS/lib/$MVER
 
 WORKDIR /var/lib/iHRIS/lib/$MVER
 
-RUN bzr co --lightweight lp:i2ce/$MVER I2CE &&\
-    bzr co --lightweight lp:textlayout/$MVER textlayout &&\
-    bzr co --lightweight lp:ihris-common/$MVER ihris-common &&\
-    bzr co --lightweight lp:$SOFT/$MVER $SOFT
+RUN wget -q --show-progress http://launchpad.net/i2ce/4.3/4.3.0/+download/ihris-suite-4.3.0.tar.bz2
+
+RUN tar -xjf ihris-suite-4.3.0.tar.bz2
 
 WORKDIR /var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE/pages
 
