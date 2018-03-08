@@ -40,7 +40,7 @@ WORKDIR /etc/apache2
 RUN sed -i "s|Options Indexes FollowSymLinks|Options Indexes FollowSymLinks MultiViews|" apache2.conf && cat apache2.conf | grep Options
 
 # defaults to 4.3 with blank site, but can be overridden in build step
-ARG MVER=4.3.0
+ARG MVER=4.3
 ARG SOFT=ihris-manage
 ARG TYPE=blank
 ARG SITE=manage

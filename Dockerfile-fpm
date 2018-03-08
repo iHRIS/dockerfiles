@@ -32,7 +32,7 @@ RUN echo 'opcache.memory_consumption=128M\n\
     opcache.enable_cli=1\n'\
     >> docker-php-ext-opcache.ini && cat docker-php-ext-opcache.ini
 
-ARG MVER=4.3.0
+ARG MVER=4.3
 ARG SOFT=ihris-manage
 ARG TYPE=blank
 ARG SITE=manage
