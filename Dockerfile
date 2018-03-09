@@ -50,7 +50,7 @@ RUN mkdir -p /var/lib/iHRIS/lib/$MVER
 
 WORKDIR /var/lib/iHRIS/lib/$MVER
 
-RUN wget -q --show-progress http://launchpad.net/i2ce/4.3/4.3.0/+download/ihris-suite-4.3.0.tar.bz2
+RUN wget -q http://launchpad.net/i2ce/4.3/4.3.0/+download/ihris-suite-4.3.0.tar.bz2
 
 RUN tar -xjf ihris-suite-4.3.0.tar.bz2
 
@@ -62,7 +62,7 @@ RUN cp htaccess.TEMPLATE .htaccess &&\
     cat .htaccess && [ -d local ] || mkdir local
 
 RUN echo "<?php \n\
-\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/$MVER/I2CE' ;\n\
+\$i2ce_site_i2ce_path = '/var/lib/iHRIS/lib/$MVER/i2ce' ;\n\
 \$i2ce_site_dsn = getenv('DSN') ;\n\
 \$i2ce_site_module_config = '/var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE/$MCONFIG' ;\n\
 \$i2ce_site_user_access_init = null ;" >> local/config.values.php && cat local/config.values.php
