@@ -1,9 +1,9 @@
 localhost
 
-tls self_signed
+tls off
 
 fastcgi / 127.0.0.1:9000 php {
+	root /var/www/html
 }
 
-log stdout
-errors stdout
+# rewrite /iHRIS /
