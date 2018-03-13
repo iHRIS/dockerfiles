@@ -3,7 +3,24 @@ localhost
 tls off
 
 fastcgi / 127.0.0.1:9000 php {
-	root /var/www/html
 }
 
-# rewrite /iHRIS /
+rewrite {
+	r ^/manage/index.php/?$
+	to /var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/home
+}
+
+rewrite {
+	r ^/manage/?$
+	to /var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/home
+}
+
+rewrite {
+	r ^/manage/index.php/(.+)$
+	to /var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/$1
+}
+
+rewrite {
+	r ^/manage/(.+)$
+	to /var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/$1
+}

@@ -1,0 +1,21 @@
+<VirtualHost *:80>
+    ServerAdmin lduncan@intrahealth.org
+    DocumentRoot "/usr/local/apache2/htdocs"
+    ServerName httpdi
+    ServerAlias httpdi
+    ErrorLog "logs/httpdi-error_log"
+    CustomLog "logs/httpdi-access_log" common
+    <Location "/manage">
+        RewriteEngine On
+        RewriteRule .* - [E=HTTP_IF_MODIFIED_SINCE:%{HTTP:If-Modified-Since}]
+        RewriteRule .* - [E=HTTP_IF_NONE_MATCH:%{HTTP:If-None-Match}]
+        ProxyFCGISetEnvIf "true" SCRIPT_NAME "/manage/index.php"
+        #ProxyFCGISetEnvIf "true" I2CE_Rewritten "On"
+        SetEnv I2CE_Rewritten On
+    </Location>
+    ProxyPassMatch "^/manage/index.php/?$" "fcgi://managedemo:9000/var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/home"
+    ProxyPassMatch "^/manage/?$" "fcgi://managedemo:9000/var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/home"
+    ProxyPassMatch "^/manage/index.php/(.+)$" "fcgi://managedemo:9000/var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/$1"
+    ProxyPassMatch "^/manage/(.+)$" "fcgi://managedemo:9000/var/lib/iHRIS/lib/4.3/ihris-manage/sites/blank/pages/index.php/$1"
+
+</VirtualHost>
