@@ -13,11 +13,11 @@ Both the ARGs and ENVs are set in the example docker-compose files. You can choo
 
 ### Mac
 
-> [Docker networking on Mac](https://docs.docker.com/docker-for-mac/networking/) and Windows uses a thin VM as Docker uses the Linux kernel. Localhost will be resolved as the VM not the host OS. Only on Linux as host OS will localhost  resolve as the host OS.
+> [Docker networking on Mac](https://docs.docker.com/docker-for-mac/networking/) and Windows uses a thin VM as Docker uses the Linux kernel. Localhost will be resolved as the VM not the host OS.
 
 One solution is to keep all containers on the same virtual bridge. The docker-compose examples use 'mysql' as the host, which launches a mysql container, and is networked with the iHRIS container on the thin VM network bridge.
 
-If you want to run mysql directly on the host OS and ensure that the iHRIS container can see it, then modify the DSN to use 'docker.for.mac.localhost' or 'docker.for.win.localhost' on Windows.
+If you want to run mysql directly on the host OS and ensure that the iHRIS container can see it, then modify the DSN to use 'host.docker.internal' on Windows or Mac (and Linux?).
 
 Install mysql using Homebrew.
 ```sh
@@ -45,14 +45,17 @@ Clone the repo, build the image, and run a container.
 ```sh
 git clone https://github.com/ihris/dockerfiles
 cd dockerfiles
+# one liner
+docker build --build-arg MVER=4.3 --build-arg SOFT=ihris-manage --build-arg TYPE=Demo --build-arg SITE=manage-demo --build-arg MCONFIG=iHRIS-Manage-Demo.xml -t ihris-manage-demo .
+# or:
 docker build \
---build-arg MVER=4.3.0 \
+--build-arg MVER=4.3 \
 --build-arg SOFT=ihris-manage \
 --build-arg TYPE=Demo \
 --build-arg SITE=manage-demo \
 --build-arg MCONFIG=iHRIS-Manage-Demo.xml \
 -t ihris-manage-demo .
-docker run -d -p 80:80 --env DSN="mysql:user=ihris;pass=ihris;host=docker.for.mac.host.internal;dbname=ihris" ihris-manage-demo
+docker run -d -p 80:80 --env DSN="mysql:user=ihris;pass=ihris;host=host.docker.internal;dbname=ihris" ihris-manage-demo
 ```
 
 ### iHRIS Manage Blank Site
@@ -88,5 +91,5 @@ Todo
 - [x] Single Dockerfile
 - [ ] Tags builds for Docker hub -- `bzr log -r-1 -q | sed -n 2p | awk '{print ($2)}'`
 - [ ] Update when object storage is added to iHRIS
-- [ ] Rewrite paths to be simpler
-- [ ] Use php-fpm container, preferably alpine
+- [ ] Rewrite paths to be simpler - may not need to do this
+- [ ] Use php-fpm container, preferably alpine: This is working with Apache as webserver (vhosts in repo) but not with Caddy or Nginx. Code fixes to make it work in iHRIS are in 4.3-dev not the pushed images.
