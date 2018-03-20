@@ -2,8 +2,8 @@ version: '3'
 
 services:
 
-  ihris-manage:
-    image: ihris/manage:4.3-0.2.0
+  ihris-manage-demo:
+    image: ihris/manage:4.3-dev-0.2.0
     container_name: ihris
     ports:
       - "80:80"

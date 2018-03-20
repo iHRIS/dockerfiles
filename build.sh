@@ -22,7 +22,7 @@ docker rmi ihris/manage:4.3-dev-0.2.0 || true
 docker build -f Dockerfile-dev -t ihris/manage:4.3-dev-0.2.0 .
 docker push ihris/manage:4.3-dev-0.2.0
 
-# release version demo
+# dev version demo
 docker rmi ihris/manage:4.3-dev-demo-0.2.0 || true
 docker build -f Dockerfile-dev \
 --build-arg MVER=4.3 \
