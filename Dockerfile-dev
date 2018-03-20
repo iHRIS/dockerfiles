@@ -77,7 +77,7 @@ RUN printf '    <enable name="csd-data-address-type" />\n\
     <enable name="mHero" />\n\
     <enable name="csd-search" />\n\
     <enable name="CSD-data" />\n\
-    <enable name="ihris-manange-mcsd-update-supplier" />\n\
+    <enable name="ihris-manage-mcsd-update-supplier" />\n\
     <enable name="PersonAttendance" />\n\
     ' >> enable.txt
 
