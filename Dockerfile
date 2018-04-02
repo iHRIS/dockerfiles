@@ -57,6 +57,7 @@ WORKDIR /var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE/pages
 
 RUN cp htaccess.TEMPLATE .htaccess &&\
     sed -i 's|RewriteBase  /iHRIS|RewriteBase |' .htaccess &&\
+    sed -i 's|SetEnv I2CE_Rewritten On|SetEnv I2CE_Rewritten On\n    SetEnv nocheck 1|' .htaccess &&\
     cat .htaccess && [ -d local ] || mkdir local
 
 RUN echo "<?php \n\
