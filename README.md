@@ -87,7 +87,11 @@ php index.php --update=1 # run this twice
 
 Set `IHRIS_MEMCACHED_SERVER` (with :port if not using default port) in order to use a separate Docker container for Memcached.
 
+To generate reports:
 
+```sh
+php index.php --page=/CustomReports/generate_force
+```
 If there are any issues, to troubleshoot, build then: docker run -it <image hash> bash
 
 Todo
