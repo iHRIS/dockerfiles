@@ -62,6 +62,7 @@ docker run -d -p 80:80 --env DSN="mysql:user=ihris;pass=ihris;host=host.docker.i
 
 ```
 git clone https://github.com/ihris/dockerfiles
+cd dockerfiles
 docker-compose -f docker-compose.manage.yml up -d
 ```
 
@@ -69,6 +70,7 @@ docker-compose -f docker-compose.manage.yml up -d
 
 ```
 git clone https://github.com/ihris/dockerfiles
+cd dockerfiles
 docker-compose -f docker-compose.manage.demo.yml up -d
 ```
 
@@ -83,13 +85,17 @@ cd manage # or cd manage-demo
 php index.php --update=1 # run this twice
 ```
 
+Set `IHRIS_MEMCACHED_SERVER` (with :port if not using default port) in order to use a separate Docker container for Memcached.
+
+
 If there are any issues, to troubleshoot, build then: docker run -it <image hash> bash
 
 Todo
-- [X] Build env/arg for DSN
+- [x] memcached
+- [x] Build env/arg for DSN
 - [x] Fix errors in manage-demo
 - [x] Single Dockerfile
 - [ ] Tags builds for Docker hub -- `bzr log -r-1 -q | sed -n 2p | awk '{print ($2)}'`
 - [ ] Update when object storage is added to iHRIS
 - [ ] Rewrite paths to be simpler - may not need to do this
-- [ ] Use php-fpm container, preferably alpine: This is working with Apache as webserver (vhosts in repo) but not with Caddy or Nginx. Code fixes to make it work in iHRIS are in 4.3-dev not the pushed images.
+- [x] Use php-fpm container. note: works only with Apache for now

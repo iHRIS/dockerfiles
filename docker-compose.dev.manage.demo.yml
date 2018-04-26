@@ -3,7 +3,7 @@ version: '3'
 services:
 
   ihris-manage-demo:
-    image: ihris/manage:4.3-dev-demo-0.2.0
+    image: ihris/manage:4.3-dev-demo
     container_name: ihris
     ports:
       - "80:80"
@@ -22,4 +22,4 @@ services:
       MYSQL_DATABASE: "ihris"
       MYSQL_USER: "ihris"
       MYSQL_PASSWORD: "ihris"
-    command: mysqld --log-bin-trust-function-creators=TRUE --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+    command: mysqld --log-bin-trust-function-creators=TRUE --sql-mode=ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION

@@ -70,6 +70,7 @@ RUN echo "<?php \n\
 WORKDIR /var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE
 
 RUN printf '    <enable name="csd-data-address-type" />\n\
+    <enable name="csd_cache" />\n\
     <enable name="csd-data-dow" />\n\
     <enable name="csd-data-gender" />\n\
     <enable name="csd-data-provider-status" />\n\
