@@ -49,9 +49,9 @@ RUN mkdir -p /var/lib/iHRIS/lib/$MVER
 
 WORKDIR /var/lib/iHRIS/lib/$MVER
 
-RUN wget -q http://launchpad.net/i2ce/4.3/4.3.2/+download/ihris-suite-4.3.2.tar.bz2
+RUN wget -q http://launchpad.net/i2ce/4.3/4.3.3/+download/ihris-suite-4.3.3.tar.bz2
 
-RUN tar -xjf ihris-suite-4.3.2.tar.bz2
+RUN tar -xjf ihris-suite-4.3.3.tar.bz2
 
 WORKDIR /var/lib/iHRIS/lib/$MVER/$SOFT/sites/$TYPE/pages
 
