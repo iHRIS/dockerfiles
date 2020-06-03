@@ -1,6 +1,8 @@
-# Docker builds for iHRIS
+# Docker builds for iHRIS v4
 
-> Note: iHRIS is pinned to PHP 7.0 and MySQL 5.5 for the 4.3 release. 4.3-dev includes a fix for it to populate the database with no errors on 5.7.
+> This repo is for v4 of iHRIS. For v5, see https://github.com/ihris/ihris
+
+> iHRIS is pinned to PHP 7.0 and MySQL 5.5 for the 4.3 release. 4.3-dev includes a fix for it to populate the database with no errors on 5.7.
 
 ### iHRIS Manage Blank Site (using MySQL inside a container)
 
